@@ -7,7 +7,6 @@ require("dotenv/config");
 
 const { PORT = 5000, LOCAL_ADDRESS = "0.0.0.0" } = process.env;
 
-
 const bookRoute = require("./api/routes/books");
 const orderRoute = require("./api/routes/orders");
 const userRoute = require("./api/routes/user");
@@ -33,6 +32,12 @@ app.use((req, res, next) => {
 app.use("/books", bookRoute);
 app.use("/orders", orderRoute);
 app.use("/user", userRoute);
+
+app.use("/", (req, res, next) => {
+  res.status(200).json({
+    minus: "Chuman",
+  });
+});
 
 app.use((req, res, next) => {
   const error = new Error("Not found");
