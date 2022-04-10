@@ -5,11 +5,17 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 require("dotenv/config");
 
+const path = require("path");
+
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "ejs");
+
 const { PORT = 5000, LOCAL_ADDRESS = "0.0.0.0" } = process.env;
 
 const bookRoute = require("./api/routes/books");
 const orderRoute = require("./api/routes/orders");
 const userRoute = require("./api/routes/user");
+const viewRoute = require("./views/routes");
 
 app.use(morgan("dev"));
 app.use("/uploads", express.static("uploads"));
@@ -32,12 +38,13 @@ app.use((req, res, next) => {
 app.use("/books", bookRoute);
 app.use("/orders", orderRoute);
 app.use("/user", userRoute);
+app.use("/", viewRoute);
 
-app.get("/", (req, res, next) => {
-  res.status(200).json({
-    minus: "Chuman",
-  });
-});
+// app.get("/", (req, res, next) => {
+//   res.status(200).json({
+//     minus: "Chuman",
+//   });
+// });
 
 app.use((req, res, next) => {
   const error = new Error("Not found");
