@@ -8,4 +8,8 @@ router.get("/", function (req, res) {
   res.render("index");
 });
 
+router.get("/dash", function (req, res) {
+  res.render("dash");
+});
+
 module.exports = router;
