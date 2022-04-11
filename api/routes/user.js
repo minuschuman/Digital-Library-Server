@@ -35,7 +35,7 @@ router.post("/signup", (req, res, next) => {
                 });
               })
               .catch((err) => {
-                //   console.log(err);
+                console.log(err);
                 res.status(500).json({
                   error: err,
                 });
@@ -48,6 +48,7 @@ router.post("/signup", (req, res, next) => {
 });
 
 router.post("/login", (req, res, next) => {
+  console.log(req.body);
   User.find({ email: req.body.email })
     .then((user) => {
       if (user.length < 1) {
