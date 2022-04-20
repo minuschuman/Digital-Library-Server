@@ -23,6 +23,18 @@ const BookSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  category: {
+    type: String,
+    required: true,
+  },
+  publication: {
+    type: String,
+    required: true,
+  },
+  edition: {
+    type: String,
+    required: true,
+  },
 });
 
 module.exports = mongoose.model("Book", BookSchema);
