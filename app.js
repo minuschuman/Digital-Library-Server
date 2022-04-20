@@ -1,9 +1,12 @@
 const express = require("express");
+const cors = require("cors");
 const app = express();
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 require("dotenv/config");
+
+app.use(cors());
 
 const path = require("path");
 
@@ -36,9 +39,9 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/books", bookRoute);
-app.use("/orders", orderRoute);
-app.use("/user", userRoute);
+app.use("/api/books", bookRoute);
+app.use("/api/orders", orderRoute);
+app.use("/api/user", userRoute);
 app.use("/", viewRoute);
 
 // app.get("/", (req, res, next) => {
