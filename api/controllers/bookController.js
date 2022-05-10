@@ -20,12 +20,16 @@ exports.books_get_all = (req, res, next) => {
       const response = {
         count: docs.length,
         books: docs.map((doc) => {
+          // console.log(doc)
           return {
             name: doc.name,
             isbn: doc.isbn,
             author: doc.author,
             price: doc.price,
             bookFile: "/" + doc.bookFile,
+            category: doc.category,
+            edition: doc.edition,
+            publication: doc.publication,
             _id: doc._id,
             request: {
               type: "GET",
@@ -53,7 +57,6 @@ exports.books_get_all = (req, res, next) => {
 exports.books_file_new = upload.single("bookFile");
 
 exports.books_add_new = (req, res, next) => {
-  // console.log(req.file);
   const book = new Book({
     _id: new mongoose.Types.ObjectId(),
     name: req.body.name,
