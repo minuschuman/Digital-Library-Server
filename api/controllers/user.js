@@ -69,11 +69,14 @@ exports.user_login = (req, res, next) => {
             },
             process.env.JWT_KEY,
             {
-              expiresIn: "1h",
+              expiresIn: "12h",
             }
           );
-          req.session.user = user;
-          console.log(req.session.user);
+          // req.session.user = user;
+          // console.log(req.session.user);
+          // user = result;
+          // user.tokens = user.tokens.concat({token})
+          // user.save();
 
           return res.status(200).json({
             message: "Auth sucess",
