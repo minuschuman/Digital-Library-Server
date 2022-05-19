@@ -24,4 +24,8 @@ yarn-debug.log*
 yarn-error.log*
 
 
-/uploads
+
+.dump
+/views
+web.js
+/public
