@@ -1,6 +1,8 @@
 const Book = require("../models/book");
 const mongoose = require("mongoose");
 const multer = require("multer");
+const fs = require("fs");
+const rimraf = require("rimraf");
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -141,10 +143,43 @@ exports.books_update = (req, res, next) => {
 
 exports.books_remove = (req, res, next) => {
   const id = req.params.bookId;
-  Book.remove({ _id: id })
+
+  Book.findById(id)
     .exec()
-    .then((result) => {
-      res.status(200).json(result);
+    .then((doc) => {
+      // console.log(doc);
+      if (doc) {
+        var uploadsDir = doc.bookFile;
+        var upload = "/uploads/";
+        fs.readdir(upload, function (err, files) {
+          fs.stat(uploadsDir, function (err, stat) {
+            var endTime, now;
+            if (err) {
+              return console.error(err);
+            }
+            now = new Date().getTime();
+            endTime = new Date(stat.ctime).getTime() + 3600000;
+            if (now > endTime) {
+              return rimraf(uploadsDir, function (err) {
+                if (err) {
+                  return console.error(err);
+                }
+                console.log("successfully deleted");
+              });
+            }
+          });
+        });
+      }
+      Book.remove({ _id: id })
+        .exec()
+        .then((result) => {
+          res.status(200).json(result);
+        })
+        .catch((err) => {
+          res.status(500).json({
+            error: err,
+          });
+        });
     })
     .catch((err) => {
       res.status(500).json({
