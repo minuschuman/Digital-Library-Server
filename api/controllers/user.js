@@ -24,6 +24,10 @@ exports.user_singup = (req, res, next) => {
           } else {
             const user = new User({
               _id: new mongoose.Types.ObjectId(),
+              name: req.body.name,
+              address: req.body.address,
+              contact: req.body.contact,
+              role: req.body.role,
               email: req.body.email,
               password: hash,
             });
@@ -103,6 +107,85 @@ exports.user_delete = (req, res, next) => {
       res.status(200).json({ message: "Usser deleted" });
     })
     .catch((err) => {
+      res.status(500).json({
+        error: err,
+      });
+    });
+};
+
+exports.users_get_all = (req, res, next) => {
+  User.find()
+    // .select("name isbn author price bookFile _id")
+    // .exec()
+    .then((docs) => {
+      const response = {
+        count: docs.length,
+        books: docs.map((doc) => {
+          // console.log(doc);
+          return {
+            name: doc.name,
+            email: doc.email,
+            role: doc.role,
+            contact: doc.contact,
+            address: doc.address,
+            request: {
+              type: "GET",
+              url: "/user/" + doc._id,
+            },
+          };
+        }),
+      };
+      if (docs) {
+        res.status(200).json(response);
+      } else {
+        res.status(404).json({
+          message: "Data Not Found",
+        });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({
+        error: err,
+      });
+    });
+};
+
+exports.user_update = (req, res, next) => {
+  const id = req.params.userId;
+  const updateOps = {};
+  for (const ops of req.body) {
+    updateOps[ops.propName] = ops.value;
+  }
+  User.update({ _id: id }, { $set: updateOps })
+    .exec()
+    .then((result) => {
+      console.log(result);
+      res.status(200).json(result);
+    })
+    .catch((err) => {
+      res.status(500).json({
+        error: err,
+      });
+    });
+};
+
+exports.user_get_single = (req, res, next) => {
+  const id = req.params.userId;
+  User.findById(id)
+    .exec()
+    .then((doc) => {
+      console.log(doc);
+      if (doc) {
+        res.status(200).json(doc);
+      } else {
+        res.status(404).json({
+          message: "Entry not found",
+        });
+      }
+    })
+    .catch((err) => {
+      // console.log("hehe"+err);
       res.status(500).json({
         error: err,
       });
