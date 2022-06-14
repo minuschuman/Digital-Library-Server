@@ -1,6 +1,7 @@
 const Order = require("../models/order");
 const Book = require("../models/book");
 const mongoose = require("mongoose");
+const jwt = require("jsonwebtoken");
 
 exports.orders_get_all = (req, res, next) => {
   Order.find()
@@ -38,16 +39,25 @@ exports.orders_get_all = (req, res, next) => {
 };
 
 exports.orders_add_new = (req, res, next) => {
+  const token = req.headers.authorization.split(" ")[1];
+  const decoded = jwt.verify(token, process.env.JWT_KEY);
+  const userId = decoded.userId;
+  if (!req.body.bookId)
+    return res.status(404).json({
+      message: "bookId required",
+    });
   Book.findById(req.body.bookId)
     .then((book) => {
       if (!book) {
+        console.log(first);
         return res.status(404).json({
-          message: "BookId not found",
+          message: "Book not found",
         });
       }
       const order = new Order({
         _id: new mongoose.Types.ObjectId(),
         book: req.body.bookId,
+        user: userId,
       });
       return order
         .save()
@@ -89,6 +99,7 @@ exports.orders_get_single = (req, res, next) => {
   const id = req.params.orderId;
   Order.findById(id)
     .populate("book", "_id name")
+    .populate("user", "_id name")
     .exec()
     .then((doc) => {
       if (doc) {
