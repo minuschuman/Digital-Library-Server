@@ -128,6 +128,8 @@ exports.users_get_all = (req, res, next) => {
             role: doc.role,
             contact: doc.contact,
             address: doc.address,
+            is_paid: doc.is_paid,
+            next_payment_date: doc.next_payment_date,
             request: {
               type: "GET",
               url: "/user/" + doc._id,
