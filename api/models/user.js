@@ -24,7 +24,15 @@ const userSchema = mongoose.Schema({
   password: { type: String, required: true },
   role: {
     type: String,
+    enum: ["user", "admin"],
     default: "user",
+  },
+  is_paid: {
+    type: Boolean,
+    default: false,
+  },
+  next_payment_date: {
+    type: Date,
   },
   // isAdmin: {
   //   type: String,
