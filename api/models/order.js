@@ -8,6 +8,17 @@ const orderSchema = mongoose.Schema({
     ref: "Book",
     required: true,
   },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+  status: {
+    type: String,
+    enum: ["returned", "pending", "cancelled"],
+    required: true,
+    default: "pending",
+  },
 });
 
 module.exports = mongoose.model("Order", orderSchema);
