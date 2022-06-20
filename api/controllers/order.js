@@ -1,7 +1,46 @@
 const Order = require("../models/order");
 const Book = require("../models/book");
+const User = require("../models/user");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
+
+exports.orders_pending = (req, res, next) => {
+  Order.find({ status: "pending" })
+    .select("book _id")
+    .populate("book", "_id name")
+    .populate("user", "_id name")
+    .exec()
+    .then((docs) => {
+      const response = {
+        count: docs.length,
+        orders: docs.map((doc) => {
+          return {
+            _id: doc._id,
+            book: doc.book,
+            user: doc.user,
+            status: doc.status,
+            request: {
+              type: "GET",
+              url: "/books/" + doc._id,
+            },
+          };
+        }),
+      };
+      if (docs) {
+        res.status(200).json(response);
+      } else {
+        res.status(404).json({
+          message: "Data Not Found",
+        });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({
+        error: err,
+      });
+    });
+};
 
 exports.orders_get_all = (req, res, next) => {
   Order.find()
@@ -15,6 +54,8 @@ exports.orders_get_all = (req, res, next) => {
           return {
             _id: doc._id,
             book: doc.book,
+            user: doc.user,
+            status: doc.status,
             request: {
               type: "GET",
               url: "/books/" + doc._id,
