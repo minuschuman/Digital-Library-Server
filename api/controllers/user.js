@@ -85,6 +85,7 @@ exports.user_login = (req, res, next) => {
           return res.status(200).json({
             message: "Auth sucess",
             token: token,
+            role: user[0].role,
           });
         }
         return res.status(401).json({
@@ -123,6 +124,7 @@ exports.users_get_all = (req, res, next) => {
         books: docs.map((doc) => {
           // console.log(doc);
           return {
+            _id : doc._id,
             name: doc.name,
             email: doc.email,
             role: doc.role,
