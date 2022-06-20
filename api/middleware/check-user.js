@@ -8,10 +8,9 @@ module.exports = (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_KEY);
     req.userData = decoded;
     const userId = decoded.userId;
-    const detail = User.findById(userId)
+    User.findById(userId)
       .exec()
       .then((detail) => {
-        // console.log(detail);
         if (detail.role !== "admin") {
           if (!detail.is_paid) {
             return res.status(403).json({
@@ -19,7 +18,12 @@ module.exports = (req, res, next) => {
             });
           }
           const date = new Date();
-          if (detail.next_payment_date <= date || !detail.next_payment_date) {
+          if (!detail.next_payment_date) {
+            return res.status(403).json({
+              message: "check payment status",
+            });
+          }
+          if (detail.next_payment_date <= date) {
             return res.status(403).json({
               message: "Renew Account",
             });
