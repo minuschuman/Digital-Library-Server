@@ -46,6 +46,7 @@ exports.orders_get_all = (req, res, next) => {
   Order.find()
     .select("book _id")
     .populate("book", "_id name")
+    .populate("user", "_id name")
     .exec()
     .then((docs) => {
       const response = {
@@ -165,6 +166,30 @@ exports.orders_get_single = (req, res, next) => {
     });
 };
 
+exports.orders_getAll_personWise = (req, res, next) => {
+  const id = req.params.UserId;
+  const rqStatus = req.params.status;
+  Order.find({ user: id, status: rqStatus })
+    .populate("book", "_id name bookFile")
+    .populate("user", "_id name")
+    .exec()
+    .then((doc) => {
+      if (doc) {
+        res.status(200).json(doc);
+      } else {
+        res.status(404).json({
+          message: "Entry not found",
+        });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({
+        error: err,
+      });
+    });
+};
+
 exports.orders_remove = (req, res, next) => {
   const id = req.params.orderId;
   Order.remove({ _id: id })
@@ -179,4 +204,10 @@ exports.orders_remove = (req, res, next) => {
         error: err,
       });
     });
+};
+
+exports.return_true = (req, res, next) => {
+  res.status(200).json({
+    message: "true",
+  });
 };
