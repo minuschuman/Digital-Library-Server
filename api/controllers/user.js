@@ -85,6 +85,7 @@ exports.user_login = (req, res, next) => {
           return res.status(200).json({
             message: "Auth sucess",
             token: token,
+            userId: user[0]._id,
             role: user[0].role,
           });
         }
@@ -124,7 +125,7 @@ exports.users_get_all = (req, res, next) => {
         books: docs.map((doc) => {
           // console.log(doc);
           return {
-            _id : doc._id,
+            _id: doc._id,
             name: doc.name,
             email: doc.email,
             role: doc.role,
@@ -156,6 +157,7 @@ exports.users_get_all = (req, res, next) => {
 };
 
 exports.user_update = (req, res, next) => {
+  // console.log(req.body);
   const id = req.params.userId;
   const updateOps = {};
   for (const ops of req.body) {
@@ -164,10 +166,11 @@ exports.user_update = (req, res, next) => {
   User.update({ _id: id }, { $set: updateOps })
     .exec()
     .then((result) => {
-      console.log(result);
+      // console.log(result);
       res.status(200).json(result);
     })
     .catch((err) => {
+      // console.log(err);
       res.status(500).json({
         error: err,
       });
@@ -179,7 +182,7 @@ exports.user_get_single = (req, res, next) => {
   User.findById(id)
     .exec()
     .then((doc) => {
-      console.log(doc);
+      // console.log(doc);
       if (doc) {
         res.status(200).json(doc);
       } else {
