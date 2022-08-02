@@ -28,7 +28,7 @@ exports.books_get_all = (req, res, next) => {
             isbn: doc.isbn,
             author: doc.author,
             price: doc.price,
-            bookFile: "/" + doc.bookFile,
+            bookFile: doc.bookFile,
             category: doc.category,
             edition: doc.edition,
             publication: doc.publication,
