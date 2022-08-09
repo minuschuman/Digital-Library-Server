@@ -169,7 +169,13 @@ exports.orders_get_single = (req, res, next) => {
 exports.orders_getAll_personWise = (req, res, next) => {
   const id = req.params.UserId;
   const rqStatus = req.params.status;
-  Order.find({ user: id, status: rqStatus })
+  var type;
+  if (rqStatus != "user") {
+    type = { user: id, status: rqStatus };
+  } else {
+    type = { user: id };
+  }
+  Order.find(type)
     .populate("book", "_id name bookFile")
     .populate("user", "_id name")
     .exec()
