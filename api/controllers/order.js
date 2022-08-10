@@ -88,10 +88,23 @@ exports.orders_add_new = (req, res, next) => {
     return res.status(404).json({
       message: "bookId required",
     });
+  // console.log(Order.find({ user: id, status: rqStatus }));
+  // console.log(Order.findOne({ user: id, book: req.body.bookId }));
+  // console.log(Order.find({ user: { $exists: true }, book: { $exists: true } }));
+  // const orderExists = Order.exists(
+  //   Order.find({ user: userId, book: req.body.bookId })
+  // );
+  // if (orderExists) {
+  // console.log(orderExists);
+  // return res.status(409).json({
+  //   message: "Already ordered",
+  // });
+  // }
+
   Book.findById(req.body.bookId)
     .then((book) => {
       if (!book) {
-        console.log(first);
+        // console.log(first);
         return res.status(404).json({
           message: "Book not found",
         });
@@ -109,7 +122,7 @@ exports.orders_add_new = (req, res, next) => {
               message: "Book not found",
             });
           }
-          console.log(result);
+          // console.log(result);
           res.status(201).json({
             message: "Order stored",
             createdOrder: {
@@ -216,4 +229,24 @@ exports.return_true = (req, res, next) => {
   res.status(200).json({
     message: "true",
   });
+};
+
+exports.order_update = (req, res, next) => {
+  const id = req.params.orderId;
+  const updateOps = {};
+  for (const ops of req.body) {
+    updateOps[ops.propName] = ops.value;
+  }
+  Order.update({ _id: id }, { $set: updateOps })
+    .exec()
+    .then((result) => {
+      // console.log(result);
+      res.status(200).json(result);
+    })
+    .catch((err) => {
+      // console.log(err);
+      res.status(500).json({
+        error: err,
+      });
+    });
 };
