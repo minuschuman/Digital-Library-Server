@@ -11,5 +11,6 @@ router.delete("/:userId", UsersConontroller.user_delete);
 router.get("/", checkAuth, UsersConontroller.users_get_all);
 router.get("/:userId", checkAuth, UsersConontroller.user_get_single);
 router.patch("/:userId", checkAuth, UsersConontroller.user_update);
+router.patch("/changePassword/:userId",checkAuth,UsersConontroller.user_password);
 
 module.exports = router;
