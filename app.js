@@ -4,9 +4,23 @@ const app = express();
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+
+// const cookieParser = require("cookie-parser");
+// const session = require("express-session");
+
 require("dotenv/config");
 
 app.use(cors());
+// app.use(
+// cors({
+/*
+    origin: ["http://localhost:3000"],
+    methods: ["GET", "POST"],
+    credentials: true,
+    */
+// })
+// );
+// app.use(cookieParser());
 
 const path = require("path");
 
@@ -18,12 +32,25 @@ const { PORT = 5000, LOCAL_ADDRESS = "0.0.0.0" } = process.env;
 const bookRoute = require("./api/routes/books");
 const orderRoute = require("./api/routes/orders");
 const userRoute = require("./api/routes/user");
+const ratingRoute = require("./api/routes/rating");
 const viewRoute = require("./views/routes");
 
 app.use(morgan("dev"));
 app.use("/uploads", express.static("uploads"));
 app.use("/public", express.static("public"));
 app.use(bodyParser.urlencoded({ extended: false }));
+// app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(
+//   session({
+//     key: "minus",
+//     secret: "subscribe",
+//     resave: false,
+//     saveUninitialized: false,
+//     cookie: {
+//       expires: 60 * 60 * 24,
+//     },
+//   })
+// );
 app.use(bodyParser.json());
 
 app.use((req, res, next) => {
@@ -42,6 +69,7 @@ app.use((req, res, next) => {
 app.use("/api/books", bookRoute);
 app.use("/api/orders", orderRoute);
 app.use("/api/user", userRoute);
+app.use("/api/rating", ratingRoute);
 app.use("/", viewRoute);
 
 // app.get("/", (req, res, next) => {
@@ -68,7 +96,8 @@ app.use((error, req, res, next) => {
 const dbURI = process.env.DB_CONNECTION;
 mongoose
   .connect(dbURI)
-  .then(() => {
+  .then((data) => {
+    // console.log(data);
     app.listen(PORT, LOCAL_ADDRESS, () => {
       console.log(`server listening at http://${LOCAL_ADDRESS}:${PORT}`);
     });
