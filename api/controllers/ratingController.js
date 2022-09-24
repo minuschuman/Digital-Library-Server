@@ -140,8 +140,9 @@ exports.rate_average = async (req, res, next) => {
 exports.rate_bayesian_average = async (req, res, next) => {
   const limit = 25;
   let pageNo = req.params.pageNo;
-  let page = isNaN(pageNo) ? 1 : pageNo;
+  let page = isNaN(pageNo) ? 0 : pageNo;
   let skip = limit * page;
+  // console.log(skip);
   /*
   const bookId = req.query.bookId;
   const pipeline0 = [
@@ -195,7 +196,7 @@ exports.rate_bayesian_average = async (req, res, next) => {
             {
               $sum: [
                 {
-                  $multiply: [25 * 5],
+                  $multiply: [25 , 5],
                 },
                 {
                   $multiply: ["$voteCount", "$avgRating"],
@@ -226,6 +227,7 @@ exports.rate_bayesian_average = async (req, res, next) => {
               _id: 0,
               name: 1,
               publication: 1,
+              isbn:1
             },
           },
         ],
@@ -235,11 +237,15 @@ exports.rate_bayesian_average = async (req, res, next) => {
       $set: {
         name: { $first: "$books.name" },
         publication: { $first: "$books.publication" },
+        isbn: { $first: "$books.isbn" },
       },
     },
     {
       $unset: "books",
     },
+    // {
+    //   $count: "voteCount",
+    // },
     {
       $skip: skip,
     },
@@ -247,10 +253,17 @@ exports.rate_bayesian_average = async (req, res, next) => {
       $limit: limit,
     },
   ];
-  const averageRate = await Rating.aggregate(pipeline);
-  // .then((docs) => {
-  //   res.json(docs);
-  // });
+  // const averageRate = await
+  Rating.aggregate(pipeline)
+    .then((docs) => {
+      res.json(docs);
+    })
+    .catch((err) => {
+      // console.log(err);
+      res.status(500).json({
+        error: err,
+      });
+    });
   // console.log(averageRate);
-  res.json(averageRate);
+  // res.json(averageRate);
 };
